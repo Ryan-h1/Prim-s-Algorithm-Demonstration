@@ -36,8 +36,12 @@ public class Main {
 
     graph.printAdjacencyList();
 
+    System.out.println();
+
     List<WeightedEdge<Integer>> minimumSpanningTree = graph.generateMSTPrim();
     minimumSpanningTree.forEach(System.out::println);
+
+    System.out.println();
 
     int totalWeight = minimumSpanningTree.stream().mapToInt(WeightedEdge::weight).sum();
 
