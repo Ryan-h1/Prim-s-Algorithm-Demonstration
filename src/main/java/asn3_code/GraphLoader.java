@@ -1,15 +1,16 @@
 // Ryan Hecht
 // 251220567
 
-package asn3;
+package asn3_code;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /***
- * GraphLoader is a utility class with one function for loading a graph from a text file.
+ * GraphLoader is a utility class with one primary function for loading a graph from a text file.
  * <p>
  * Note: This class is tightly coupled and intended for a very specific format of the input file where the first line
  * contains an integer indicating the number of vertices in the graph and each of the remaining lines contains three
@@ -17,7 +18,8 @@ import java.io.InputStreamReader;
  */
 public final class GraphLoader {
 
-  public static WeightedGraph loadUndirectedWeightedGraph(String resourcePath) throws IOException {
+  public static WeightedGraph loadUndirectedWeightedGraphMaven(String resourcePath)
+      throws IOException {
     InputStream inputStream = GraphLoader.class.getResourceAsStream(resourcePath);
     if (inputStream == null) {
       throw new IOException("Resource not found: " + resourcePath);
@@ -42,5 +44,22 @@ public final class GraphLoader {
       }
       return graph;
     }
+  }
+
+  public static WeightedGraph loadUndirectedWeightedGraphFromStdin() throws IOException {
+    Scanner scanner = new Scanner(System.in);
+    int n = scanner.nextInt(); // First input is the number of vertices
+
+    WeightedGraph graph = new WeightedGraph(n);
+
+    while (scanner.hasNextInt()) {
+      int source = scanner.nextInt();
+      int target = scanner.nextInt();
+      int weight = scanner.nextInt();
+
+      graph.addWeightedEdge(source, target, weight);
+    }
+    scanner.close();
+    return graph;
   }
 }

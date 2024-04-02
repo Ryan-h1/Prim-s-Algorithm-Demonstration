@@ -1,7 +1,7 @@
 // Ryan Hecht
 // 251220567
 
-package asn3;
+package asn3_code;
 
 import java.util.*;
 
