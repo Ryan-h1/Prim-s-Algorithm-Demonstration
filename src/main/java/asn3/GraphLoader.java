@@ -1,3 +1,6 @@
+// Ryan Hecht
+// 251220567
+
 package asn3;
 
 import java.io.BufferedReader;
@@ -5,6 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/***
+ * GraphLoader is a utility class with one function for loading a graph from a text file.
+ * <p>
+ * Note: This class is tightly coupled and intended for a very specific format of the input file where the first line
+ * contains an integer indicating the number of vertices in the graph and each of the remaining lines contains three
+ * integers representing an edge: the source vertex, the target vertex, and the weight of the edge.
+ */
 public final class GraphLoader {
 
   public static WeightedGraph loadUndirectedWeightedGraph(String resourcePath) throws IOException {

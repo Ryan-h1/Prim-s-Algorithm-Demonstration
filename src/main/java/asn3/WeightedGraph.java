@@ -1,9 +1,21 @@
+// Ryan Hecht
+// 251220567
+
 package asn3;
 
 import java.util.*;
 
+/***
+ * This class represents a weighted, undirected graph using an internal adjacency list representation. The graph is
+ * 1-indexed, meaning that the vertices are numbered from 1 to n, where n is the number of vertices.
+ * <p>
+ * Note: This class is tightly coupled and should not be considered a general-purpose graph implementation. It was
+ * made specifically for the purpose of implementing Prim's algorithm for finding the minimum spanning tree of a graph.
+ */
 public class WeightedGraph {
-  private final Map<Integer, List<WeightedEdgeSingleTarget<Integer>>> adjacencyList;
+  private static final int STARTING_VERTEX = 1;
+
+  private final Map<Integer, List<OutgoingWeightedEdge<Integer>>> adjacencyList;
   private final int numberOfVertices;
 
   public WeightedGraph(int numberOfVertices) {
@@ -15,46 +27,39 @@ public class WeightedGraph {
   }
 
   public void addWeightedEdge(int source, int target, int weight) {
-    adjacencyList.get(source).add(new WeightedEdgeSingleTarget<>(target, weight));
+    adjacencyList.get(source).add(new OutgoingWeightedEdge<>(target, weight));
     // For directed graphs, we would comment the following line
-    adjacencyList.get(target).add(new WeightedEdgeSingleTarget<>(source, weight));
+    adjacencyList.get(target).add(new OutgoingWeightedEdge<>(source, weight));
   }
 
   public List<WeightedEdge<Integer>> generateMSTPrim() {
     List<WeightedEdge<Integer>> mst = new ArrayList<>();
     boolean[] inMST = new boolean[numberOfVertices + 1];
-    PriorityQueue<VertexKey> pq = new PriorityQueue<>();
-    int[] key = new int[numberOfVertices + 1];
+    Heap heap = new Heap(new int[numberOfVertices + 1]); // +1 for 1-based indexing
     int[] parent = new int[numberOfVertices + 1];
-    Arrays.fill(key, Integer.MAX_VALUE);
-    Arrays.fill(parent, -1);
 
-    // Start with vertex 1
-    key[1] = 0;
-    pq.offer(new VertexKey(1, 0));
+    heap.decreaseKey(STARTING_VERTEX, 0);
 
-    while (!pq.isEmpty()) {
-      int u = pq.poll().vertex;
-      inMST[u] = true;
+    while (!heap.isEmpty()) {
+      // Extract the minimum vertex id
+      int u = heap.minId();
+      heap.deleteMin();
+      inMST[u] = true; // Include it in MST
 
-      // Iterate through all the adjacent vertices of u
-      for (WeightedEdgeSingleTarget<Integer> edge : adjacencyList.get(u)) {
-        int v = edge.target;
-        int weight = edge.weight;
-
-        // If v is not in MST and weight of u-v is smaller than the current key of v
-        if (!inMST[v] && weight < key[v]) {
-          parent[v] = u;
-          key[v] = weight;
-          pq.offer(new VertexKey(v, key[v]));
-        }
+      if (parent[u] > 0) {
+        mst.add(new WeightedEdge<>(parent[u], u, heap.key(u)));
       }
-    }
 
-    // Build the MST result
-    for (int i = 2; i <= numberOfVertices; i++) { // Skip the starting vertex
-      if (parent[i] > 0) { // i.e., there is an edge from parent[i] to i
-        mst.add(new WeightedEdge<>(parent[i], i, key[i]));
+      // For each adjacent vertex v of u
+      for (OutgoingWeightedEdge<Integer> edge : adjacencyList.get(u)) {
+        int v = edge.target();
+        int weight = edge.weight();
+
+        // If v is not in MST and weight of edge u-v is smaller than the key of v
+        if (!inMST[v] && weight < heap.key(v)) {
+          parent[v] = u;
+          heap.decreaseKey(v, weight); // Update the key in the heap
+        }
       }
     }
 
@@ -66,7 +71,9 @@ public class WeightedGraph {
         (vertex, edges) -> {
           System.out.print("Vertex " + vertex + ": ");
           edges.forEach(
-              edge -> System.out.print(" -> " + edge.target + " (Weight: " + edge.weight + ")"));
+              edge ->
+                  System.out.print(
+                      " -> " + edge.target() + " (Weight: " + edge.weight() + ")"));
           System.out.println();
         });
   }

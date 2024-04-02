@@ -1,3 +1,6 @@
+// Ryan Hecht
+// 251220567
+
 package asn3;
 
 import java.io.IOException;
@@ -7,7 +10,7 @@ public class Main {
   public static void main(String[] args) {
     WeightedGraph graph;
 
-    /* We exit in the case of an error because there's no graph to work with and therefore no program to run! */
+    // We exit in the case of an error because there's no graph to work with!
     try {
       graph = GraphLoader.loadUndirectedWeightedGraph("/mst_graph_medium.txt");
     } catch (IOException e) {
@@ -20,7 +23,7 @@ public class Main {
     List<WeightedEdge<Integer>> minimumSpanningTree = graph.generateMSTPrim();
     minimumSpanningTree.forEach(System.out::println);
 
-    int totalWeight = minimumSpanningTree.stream().mapToInt(edge -> edge.weight).sum();
+    int totalWeight = minimumSpanningTree.stream().mapToInt(WeightedEdge::weight).sum();
 
     System.out.println("Total weight of the minimum spanning tree: " + totalWeight);
   }

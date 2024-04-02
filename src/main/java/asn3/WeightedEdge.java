@@ -1,15 +1,9 @@
+// Ryan Hecht
+// 251220567
+
 package asn3;
 
-public class WeightedEdge<T> {
-  public final T source;
-  public final T target;
-  public final int weight;
-
-  public WeightedEdge(T source, T target, int weight) {
-    this.source = source;
-    this.target = target;
-    this.weight = weight;
-  }
+public record WeightedEdge<T>(T source, T target, int weight) {
 
   @Override
   public String toString() {
